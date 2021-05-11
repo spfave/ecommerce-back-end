@@ -96,7 +96,7 @@ router.post("/", async (req, res) => {
   //   });
 });
 
-// update product
+// Update a product by its `id`
 router.put("/:id", (req, res) => {
   // update product data
   Product.update(req.body, {
@@ -138,8 +138,20 @@ router.put("/:id", (req, res) => {
     });
 });
 
-router.delete("/:id", (req, res) => {
-  // delete one product by its `id` value
+// Delete a product by its `id`
+router.delete("/:id", async (req, res) => {
+  try {
+    const productData = await Product.destroy({ where: { id: req.params.id } });
+
+    if (!productData) {
+      res.status(404).json({ message: `No product found for this id` });
+      return;
+    }
+
+    res.status(200).json(productData);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 module.exports = router;
