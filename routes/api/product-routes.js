@@ -2,11 +2,25 @@ const router = require("express").Router();
 const { Product, Category, Tag, ProductTag } = require("../../models");
 
 // The `/api/products` endpoint
+// Get all products including associated category and tag data
+router.get("/", async (req, res) => {
+  try {
+    const productData = await Product.findAll({
+      include: [
+        { model: Category },
+        { model: Tag, through: ProductTag, as: "product_tags" }, // getting double?
+      ],
+    });
 
-// get all products
-router.get("/", (req, res) => {
-  // find all products
-  // be sure to include its associated Category and Tag data
+    if (!productData) {
+      res.status(404).json({ message: "No products found" });
+      return;
+    }
+
+    res.status(200).json(productData);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 // get one product
@@ -24,6 +38,7 @@ router.post("/", (req, res) => {
       stock: 3,
       tagIds: [1, 2, 3, 4]
     }
+
   */
   Product.create(req.body)
     .then((product) => {
