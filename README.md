@@ -1,4 +1,4 @@
-# **ECommerce Back End**
+# **E-Commerce Back End APIs**
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT) &emsp;&emsp;
 ![JS](https://img.shields.io/badge/Code-JavaScript-informational?style=flat-square&logo=javascript&logoColor=white&color=yellow)
 
@@ -14,21 +14,29 @@
 
 &nbsp;
 ## **Description**
+E-commerce backend is a demonstration of building out a set of RESTful APIs to mock functionality of a online shopping site back end. The server application is connected to a MySQL database that contains four tables which includes 1 one-to-many relation and 1 many-to-many relation. Sequelize is used as an ORM to facilitate model (table) definitions and to perform SQL query operations on the database. The Sequelize database operations are initiated by submitting a get, push, put, or delete request to the appropriate API routes.  
+
+This demo server application is built with JavaScript and Express.js. The capabilities of the app can be tested using an API testing client such as [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/). 
 
 
 &nbsp;
-## **[Video Demonstration](https://youtu.be/z4xDjCrSHxc)**
+## **[Video Demonstration]()**
 &nbsp;
 ## **Development/Application Screenshots**
-
+![]()
+![]()
+![]()
+![]()
 
 &nbsp;
 ## **Technologies and Services**
 Development Technologies
 - JavaScript, Node.js
 - MySQL, Sequelize 
+- RESTful APIs
 
 External Packages, Frameworks, and Services
+- [express](https://www.npmjs.com/package/express)
 - [dotenv](https://www.npmjs.com/package/dotenv)
 - [Inquirer](https://www.npmjs.com/package/inquirer)
 - [mysql2](https://www.npmjs.com/package/mysql2)
