@@ -23,10 +23,9 @@ This demo server application is built with JavaScript and Express.js. The capabi
 ## **[Video Demonstration]()**
 &nbsp;
 ## **Development/Application Screenshots**
-![]()
-![]()
-![]()
-![]()
+![E-commerce API category routes](./assets/ecommerce-category-routes.gif)
+![E-commerce API product routes](./assets/ecommerce-product-routes.gif)
+![E-commerce API tag routes](./assets/ecommerce-tag-routes.gif)
 
 &nbsp;
 ## **Technologies and Services**
