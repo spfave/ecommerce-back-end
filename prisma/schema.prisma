@@ -11,23 +11,23 @@ datasource db {
 }
 
 model Category {
-  id           String    @id @default(uuid())
+  id           Int       @id @default(autoincrement())
   categoryName String    @unique
   products     Product[]
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          Int      @id @default(autoincrement())
   productName String
   price       Float
   stock       Int      @default(10)
-  categoryId  String
+  categoryId  Int
   category    Category @relation(fields: [categoryId], references: [id])
   tags        Tag[]
 }
 
 model Tag {
-  id       String    @id @default(uuid())
+  id       Int       @id @default(autoincrement())
   tagName  String    @unique
   products Product[]
 }
