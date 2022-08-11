@@ -1,16 +1,24 @@
-const router = require("express").Router();
-const { Category, Product } = require("../../models");
+const router = require('express').Router();
+// const prisma = require('../config/prisma-client');
+
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 // The `/api/categories` endpoint
 // Get all categories including associated products
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const categoryData = await Category.findAll({
-      include: [{ model: Product }],
+    const categoryData = await prisma.category.findMany({
+      include: {
+        products: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
     });
 
     if (!categoryData.length) {
-      res.status(404).json({ message: "No categories found" });
+      res.status(404).json({ message: 'No categories found' });
       return;
     }
 
@@ -21,10 +29,15 @@ router.get("/", async (req, res) => {
 });
 
 // Get one category by its `id` with associated products
-router.get("/:id", async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const categoryData = await Category.findByPk(req.params.id, {
-      include: [{ model: Product }],
+    const categoryData = await prisma.category.findUnique({
+      where: {
+        id: parseInt(req.params.id),
+      },
+      include: {
+        products: true,
+      },
     });
 
     if (!categoryData) {
@@ -39,9 +52,12 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new category
-router.post("/", async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    const categoryData = await Category.create(req.body);
+    const categoryData = await prisma.category.create({
+      data: req.body,
+    });
+
     res.status(200).json(categoryData);
   } catch (error) {
     res.status(400).json(error);
@@ -49,13 +65,14 @@ router.post("/", async (req, res) => {
 });
 
 // Update a category by its `id`
-router.put("/:id", async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    const categoryData = await Category.update(req.body, {
-      where: { id: req.params.id },
+    const categoryData = await prisma.category.update({
+      where: { id: parseInt(req.params.id) },
+      data: req.body,
     });
 
-    if (!categoryData[0]) {
+    if (!categoryData) {
       res.status(404).json({ message: `No category found for this id` });
       return;
     }
@@ -67,10 +84,10 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete a category by its `id`
-router.delete("/:id", async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    const categoryData = await Category.destroy({
-      where: { id: req.params.id },
+    const categoryData = await prisma.category.delete({
+      where: { id: parseInt(req.params.id) },
     });
 
     if (!categoryData) {
