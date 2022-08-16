@@ -1,13 +1,15 @@
-const router = require("express").Router();
-const { Tag, Product, ProductTag } = require("../../models");
-const { restore } = require("../../models/Product");
+const router = require('express').Router();
+const { PrismaClient } = require('@prisma/client');
+
+const prisma = new PrismaClient();
 
 // The `/api/tags` endpoint
 // Get all tags including associated product data
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const tagData = await Tag.findAll({
-      include: [{ model: Product, through: ProductTag, as: "tag_products" }],
+    const tagData = await prisma.tag.findMany({
+      include: { products: true },
+      orderBy: { id: 'asc' },
     });
 
     if (!tagData) {
@@ -21,10 +23,11 @@ router.get("/", async (req, res) => {
 });
 
 // Get one tag by its `id` with associated products
-router.get("/:id", async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const tagData = await Tag.findByPk(req.params.id, {
-      include: [{ model: Product, through: ProductTag, as: "tag_products" }],
+    const tagData = await prisma.tag.findUnique({
+      where: { id: parseInt(req.params.id) },
+      include: { products: true },
     });
 
     if (!tagData) {
@@ -38,9 +41,9 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new tag
-router.post("/", async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    const tagData = await Tag.create(req.body);
+    const tagData = await prisma.tag.create({ data: req.body });
     res.status(200).json(tagData);
   } catch (error) {
     res.status(400).json(error);
@@ -48,13 +51,14 @@ router.post("/", async (req, res) => {
 });
 
 // Update a tag's by its `id`
-router.put("/:id", async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    const tagData = await Tag.update(req.body, {
-      where: { id: req.params.id },
+    const tagData = await prisma.tag.update({
+      where: { id: parseInt(req.params.id) },
+      data: req.body,
     });
 
-    if (!tagData[0]) {
+    if (!tagData) {
       res.status(404).json({ message: `No tag found for this id` });
       return;
     }
@@ -66,9 +70,11 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete on tag by its `id`
-router.delete("/:id", async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    const tagData = await Tag.destroy({ where: { id: req.params.id } });
+    const tagData = await prisma.tag.delete({
+      where: { id: parseInt(req.params.id) },
+    });
 
     if (!tagData) {
       res.status(404).json(`No tag found for this id`);
