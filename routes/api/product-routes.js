@@ -1,19 +1,18 @@
-const router = require("express").Router();
-const { Product, Category, Tag, ProductTag } = require("../../models");
+const router = require('express').Router();
+const { PrismaClient } = require('@prisma/client');
+
+const prisma = new PrismaClient();
 
 // The `/api/products` endpoint
 // Get all products including associated category and tag data
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const productData = await Product.findAll({
-      include: [
-        { model: Category },
-        { model: Tag, through: ProductTag, as: "product_tags" }, // getting double?
-      ],
+    const productData = await prisma.product.findMany({
+      include: { category: true, tags: true },
     });
 
     if (!productData) {
-      res.status(404).json({ message: "No products found" });
+      res.status(404).json({ message: 'No products found' });
       return;
     }
 
@@ -24,13 +23,11 @@ router.get("/", async (req, res) => {
 });
 
 // Get one product by its `id` with associated category and tag data
-router.get("/:id", async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const productData = await Product.findByPk(req.params.id, {
-      include: [
-        { model: Category },
-        { model: Tag, through: ProductTag, as: "product_tags" }, //getting double?
-      ],
+    const productData = await prisma.product.findUnique({
+      where: { id: parseInt(req.params.id) },
+      include: { category: true, tags: true },
     });
 
     if (!productData) {
@@ -45,7 +42,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new product
-router.post("/", async (req, res) => {
+router.post('/', async (req, res) => {
   /* req.body should look like this...
     {
       product_name: "Basketball",
@@ -55,19 +52,24 @@ router.post("/", async (req, res) => {
     }
   */
   try {
-    const productData = await Product.create(req.body);
+    const { productName, price, stock, categoryId, tagIds } = req.body;
+    const mapTagIds = tagIds?.map((id) => ({ id }));
 
-    // if product tags included create product-tag relations and bulk create with ProductTag model
-    // else end and return product data
-    if (req.body.tagIds.length) {
-      const productTagIdArr = req.body.tagIds.map((tag_id) => {
-        return { product_id: productData.id, tag_id };
-      });
-      const productTagIds = await ProductTag.bulkCreate(productTagIdArr);
-
-      res.status(200).json({ productData, productTagIds });
-      return;
-    }
+    const productData = await prisma.product.create({
+      data: {
+        productName,
+        price,
+        stock,
+        categoryId,
+        tags: {
+          connect: mapTagIds,
+        },
+      },
+      include: {
+        category: true,
+        tags: true,
+      },
+    });
 
     res.status(200).json(productData);
   } catch (error) {
@@ -76,56 +78,59 @@ router.post("/", async (req, res) => {
 });
 
 // Update a product by its `id`
-router.put("/:id", (req, res) => {
-  // update product data
-  Product.update(req.body, {
-    where: {
-      id: req.params.id,
-    },
-  })
-    .then((product) => {
-      // find all associated tags from ProductTag
-      return ProductTag.findAll({ where: { product_id: req.params.id } });
-    })
-    .then((productTags) => {
-      // get list of current tag_ids
-      const productTagIds = productTags.map(({ tag_id }) => tag_id);
-      // create filtered list of new tag_ids
-      const newProductTags = req.body.tagIds
-        .filter((tag_id) => !productTagIds.includes(tag_id))
-        .map((tag_id) => {
-          return {
-            product_id: req.params.id,
-            tag_id,
-          };
-        });
-      // figure out which ones to remove
-      const productTagsToRemove = productTags
-        .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
-        .map(({ id }) => id);
+router.put('/:id', async (req, res) => {
+  try {
+    const { productName, price, stock, categoryId, tagIds } = req.body;
 
-      // run both actions
-      return Promise.all([
-        ProductTag.destroy({ where: { id: productTagsToRemove } }),
-        ProductTag.bulkCreate(newProductTags),
-      ]);
-    })
-    .then((updatedProductTags) => res.json(updatedProductTags))
-    .catch((err) => {
-      // console.log(err);
-      res.status(400).json(err);
+    const productTagData = await prisma.product.findUnique({
+      where: { id: parseInt(req.params.id) },
+      select: { tags: { select: { id: true } } },
     });
+    // console.log(`productTagData: `, productTagData);
+
+    const productTagIds = productTagData.tags.map(({ id }) => id);
+    const newProductTagIds = tagIds.filter(
+      (tagId) => !productTagIds.includes(tagId)
+    );
+    const oldProductTagIds = productTagIds.filter(
+      (tagId) => !tagIds.includes(tagId)
+    );
+    // console.log(`newProductTags: `, newProductTagIds);
+    // console.log(`oldProductTags: `, oldProductTagIds);
+
+    const productData = await prisma.product.update({
+      where: { id: parseInt(req.params.id) },
+      data: {
+        productName,
+        price,
+        stock,
+        categoryId,
+        tags: {
+          connect: newProductTagIds.map((id) => ({ id })),
+          disconnect: oldProductTagIds.map((id) => ({ id })),
+        },
+      },
+      include: { tags: true },
+    });
+    // console.log(`productData: `, productData);
+
+    res.status(200).json(productData);
+  } catch (error) {
+    res.status(400).json(error);
+  }
 });
 
 // Delete a product by its `id`
-router.delete("/:id", async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    const productData = await Product.destroy({ where: { id: req.params.id } });
+    const productData = await prisma.product.delete({
+      where: { id: parseInt(req.params.id) },
+    });
 
-    if (!productData) {
-      res.status(404).json({ message: `No product found for this id` });
-      return;
-    }
+    // if (!productData) {
+    //   res.status(404).json({ message: `No product found for this id` });
+    //   return;
+    // }
 
     res.status(200).json(productData);
   } catch (error) {
