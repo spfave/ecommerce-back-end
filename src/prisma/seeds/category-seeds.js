@@ -1,4 +1,4 @@
-const categoryData = [
+export const categoryData = [
 	{
 		categoryName: 'Shirts',
 	},
@@ -15,5 +15,3 @@ const categoryData = [
 		categoryName: 'Shoes',
 	},
 ];
-
-module.exports = categoryData;

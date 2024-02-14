@@ -1,4 +1,4 @@
-const tagData = [
+export const tagData = [
 	{
 		tagName: 'rock music',
 	},
@@ -24,5 +24,3 @@ const tagData = [
 		tagName: 'pop culture',
 	},
 ];
-
-module.exports = tagData;

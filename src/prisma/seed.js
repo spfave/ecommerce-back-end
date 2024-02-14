@@ -1,11 +1,8 @@
-const { PrismaClient } = require('@prisma/client');
-
-const categoryData = require('./seeds/category-seeds');
-const productData = require('./seeds/product-seeds');
-const tagData = require('./seeds/tag-seeds');
-const productTagData = require('./seeds/product-tag-seeds');
-
-const prisma = new PrismaClient();
+import { prisma } from '../config/prisma-client.js';
+import { categoryData } from './seeds/category-seeds.js';
+import { productData } from './seeds/product-seeds.js';
+import { tagData } from './seeds/tag-seeds.js';
+import { productTagData } from './seeds/product-tag-seeds.js';
 
 async function seedAll() {
 	await prisma.category.createMany({

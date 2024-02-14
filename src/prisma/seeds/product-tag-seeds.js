@@ -1,4 +1,4 @@
-const productTagData = [
+export const productTagData = [
 	{
 		productId: 1,
 		tagId: 6,
@@ -48,5 +48,3 @@ const productTagData = [
 		tagId: 3,
 	},
 ];
-
-module.exports = productTagData;

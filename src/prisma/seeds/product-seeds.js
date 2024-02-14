@@ -1,4 +1,4 @@
-const productData = [
+export const productData = [
 	{
 		productName: 'Plain T-Shirt',
 		price: 14.99,
@@ -30,5 +30,3 @@ const productData = [
 		categoryId: 2,
 	},
 ];
-
-module.exports = productData;
