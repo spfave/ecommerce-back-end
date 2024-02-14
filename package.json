@@ -11,6 +11,7 @@
 		"db:deploy": "prisma migrate deploy"
 	},
 	"prisma": {
+		"schema": "./src/prisma/schema.prisma",
 		"seed": "node ./src/prisma/seed.js"
 	},
 	"repository": {
