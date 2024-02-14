@@ -1,8 +1,7 @@
-const router = require('express').Router();
-// const prisma = require('../config/prisma-client');
+import { Router } from 'express';
+import { prisma } from '../../config/prisma-client.js';
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+export const router = Router();
 
 // The `/api/categories` endpoint
 // Get all categories including associated products
@@ -100,5 +99,3 @@ router.delete('/:id', async (req, res) => {
 		res.status(500).json(error);
 	}
 });
-
-module.exports = router;
