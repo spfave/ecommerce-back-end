@@ -6,9 +6,11 @@
 	"type": "module",
 	"scripts": {
 		"start": "node ./src/server.js",
-		"start:prod": "npm run db:deploy && npm run start",
+		"start:prod": "node ./src/server.js",
+		"start:deploy:seed:prod": "npm run db:deploy && npm run db:seed && npm run start:prod",
 		"dev": "node --env-file=.env --watch ./src/server.js",
-		"db:deploy": "prisma migrate deploy"
+		"db:deploy": "prisma migrate deploy",
+		"db:seed": "npx prisma db seed"
 	},
 	"prisma": {
 		"schema": "./src/prisma/schema.prisma",
