@@ -9,11 +9,13 @@ services:
       dockerfile: ./Dockerfile
     depends_on:
       - ecommerce-db-sql
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: 
     ports:
       - 3000:3000
+    environment:
+      NODE_ENV: production
+      # DATABASE_URL: provided via secret and set in start-app shell script
+    secrets:
+      - DATABASE_URL
 
   # MySQL Database
   ecommerce-db-sql:
@@ -24,10 +26,21 @@ services:
     expose:
       - 3306
     environment:
-      MYSQL_DATABASE: 
-      MYSQL_ROOT_PASSWORD: 
+      MYSQL_DATABASE_FILE: /run/secrets/mysql_database
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+    secrets:
+      - mysql_database
+      - mysql_root_password
     volumes:
       - ecommerce-data:/var/lib/mysql
 
 volumes:
   ecommerce-data:
+
+secrets:
+  mysql_database:
+    file: ./secrets/mysql_database.txt
+  mysql_root_password:
+    file: ./secrets/mysql_root_password.txt
+  DATABASE_URL:
+    file: ./secrets/database_url.txt

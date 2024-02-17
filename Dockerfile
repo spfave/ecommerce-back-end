@@ -15,9 +15,11 @@ WORKDIR /app
 COPY --from=base /app/package*.json ./
 COPY --from=base /app/node_modules ./node_modules
 COPY ./src ./src
+COPY ./start-app.sh ./
 
 RUN chown -R node /app
 USER node
 
 EXPOSE 3000
-CMD ["npm", "run", "start:deploy:seed:prod"]
+CMD ["./start-app.sh"]
+# CMD ["npm", "run", "start:deploy:seed:prod"]
