@@ -30,16 +30,12 @@ This demo server application is built with JavaScript and Express.js. The capabi
 &nbsp;
 ## **Technologies and Services**
 Development Technologies
-- JavaScript, Node.js
-- MySQL, Sequelize 
-- RESTful APIs
+- Node.js, Express
+- MySQL, Prisma 
 
 External Packages, Frameworks, and Services
 - [express](https://www.npmjs.com/package/express)
-- [dotenv](https://www.npmjs.com/package/dotenv)
-- [Inquirer](https://www.npmjs.com/package/inquirer)
-- [mysql2](https://www.npmjs.com/package/mysql2)
-
+- [prisma](https://www.prisma.io/)
 
 &nbsp;
 ## **License**

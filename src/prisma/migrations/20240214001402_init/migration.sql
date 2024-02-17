@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE `Category` (
-    `id` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `categoryName` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `Category_categoryName_key`(`categoryName`),
@@ -9,18 +9,18 @@ CREATE TABLE `Category` (
 
 -- CreateTable
 CREATE TABLE `Product` (
-    `id` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `productName` VARCHAR(191) NOT NULL,
     `price` DOUBLE NOT NULL,
     `stock` INTEGER NOT NULL DEFAULT 10,
-    `categoryId` VARCHAR(191) NOT NULL,
+    `categoryId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Tag` (
-    `id` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `tagName` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `Tag_tagName_key`(`tagName`),
@@ -29,8 +29,8 @@ CREATE TABLE `Tag` (
 
 -- CreateTable
 CREATE TABLE `_ProductToTag` (
-    `A` VARCHAR(191) NOT NULL,
-    `B` VARCHAR(191) NOT NULL,
+    `A` INTEGER NOT NULL,
+    `B` INTEGER NOT NULL,
 
     UNIQUE INDEX `_ProductToTag_AB_unique`(`A`, `B`),
     INDEX `_ProductToTag_B_index`(`B`)
